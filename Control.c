@@ -67,19 +67,19 @@ void Speed_Control(void)
 void Set_Distance(uint16_t dist)
 {
 	setMotorDir(FWD,FWD);
-    Set_Des_Speed(6);
+    Set_Des_Speed(7);
     distance = dist;
 }
 
 void Rotate_Left(uint16_t angle){
     setMotorDir(BWD,FWD);
-    Set_Des_Speed(4);
+    Set_Des_Speed(6);
     distance = angle;
 }
 
 void Rotate_Right(uint16_t angle){
     setMotorDir(FWD,BWD);
-    Set_Des_Speed(4);
+    Set_Des_Speed(6);
     distance = angle;
 }
 
