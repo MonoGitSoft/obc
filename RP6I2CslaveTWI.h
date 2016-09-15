@@ -41,10 +41,7 @@
 /*****************************************************************************/
 
 #define TWI_GENERAL_CALL_ENABLE   1
-
-
 void I2CTWI_initSlave(uint8_t address);
-int get_command(void);
 
 extern uint8_t I2CTWI_readRegisters[I2CTWI_SLAVE_READ_REGISTERS];
 extern volatile uint8_t I2CTWI_writeRegisters[I2CTWI_SLAVE_WRITE_REGISTERS];
@@ -53,12 +50,8 @@ extern volatile uint8_t I2CTWI_readBusy;
 extern volatile uint8_t I2CTWI_writeBusy;
 extern volatile uint8_t I2CTWI_dataWasRead;
 extern volatile uint8_t I2CTWI_dataReadFromReg;
-extern volatile uint8_t command;
-extern volatile uint8_t param_1;
-extern volatile uint8_t param_2;
-extern volatile uint8_t param_3;
-extern volatile uint8_t param_4;
-extern volatile uint8_t param_5;
+
+
 /*****************************************************************************/
 // TWI Status Codes:
 // The TWI status codes were taken from ATMEL AN311!
@@ -85,7 +78,7 @@ extern volatile uint8_t param_5;
 #define TWI_STX_ADR_ACK_M_ARB_LOST 0xB0  // Arbitration lost in SLA+R/W as Master; own SLA+R has been received; ACK has been returned
 #define TWI_STX_DATA_ACK           0xB8  // Data byte in TWDR has been transmitted; ACK has been received
 #define TWI_STX_DATA_NACK          0xC0  // Data byte in TWDR has been transmitted; NOT ACK has been received
-#define TWI_STX_DATA_ACK_LAST_BYTE 0xC8  // Last data byte in TWDR has been transmitted (TWEA = �0�); ACK has been received
+#define TWI_STX_DATA_ACK_LAST_BYTE 0xC8  // Last data byte in TWDR has been transmitted (TWEA = 0); ACK has been received
 
 // TWI Slave Receiver staus codes
 #define TWI_SRX_ADR_ACK            0x60  // Own SLA+W has been received ACK has been returned
@@ -99,7 +92,7 @@ extern volatile uint8_t param_5;
 #define TWI_SRX_STOP_RESTART       0xA0  // A STOP condition or repeated START condition has been received while still addressed as Slave
 
 // TWI Miscellaneous status codes
-#define TWI_NO_STATE               0xF8  // No relevant state information available; TWINT = �0�
+#define TWI_NO_STATE               0xF8  // No relevant state information available; TWINT = 0
 #define TWI_BUS_ERROR              0x00  // Bus error due to an illegal START or STOP condition
 
 #endif

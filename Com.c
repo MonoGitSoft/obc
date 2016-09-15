@@ -71,12 +71,24 @@ void SendPose(void) {
     for(int i = 0; i < 14; i++) {
     	writeChar((char)sendBuf[i]);
     }
-    writeChar('c');
+    if( (permission.move == 1) || (permission.rotate_left == 1) || (permission.rotate_right == 1)) {
+    	writeChar('m');
+    }
+    else {
+    	writeChar('s');
+    }
 }
 
 void CheckBufSize(void) {
-	if(getBufferLength() == 1) {
+	if(getBufferLength() > 0) {
 		uartState = getCommand;
+	}
+}
+
+void ComErrorDetectio(void) {
+	if((getBufferLength() > 5) || ((uartState != 3) && (getBufferLength() > 1)) )  {
+		uartState = getCommand;
+		clearReceptionBuffer();
 	}
 }
 
@@ -128,7 +140,7 @@ void GetParam(void) {
 	uint16_t calc_crc;
 	temp_crc = &crc;
 	temp_param = &param;
-	if(getBufferLength() == 4) {
+	if(getBufferLength() >= 4) {
 		readChars((char*)&param_crc,4);
 		clearReceptionBuffer();
 		memcpy(temp_param,&param_crc[2],2);
@@ -138,11 +150,13 @@ void GetParam(void) {
 		if(calc_crc != crc) {
 			notAck[0] = uartState;//(char)param_crc[2];
 			notAck[1] = 'S';//(char)param_crc[3];
+			clearReceptionBuffer();
 			writeStringLength(&notAck[0],2,0);
 			return;
 		}
 		else {
 			ack = param_crc[2];
+			clearReceptionBuffer();
 			writeChar(ack);
 			Command = uart_command;
 			uart_command = 0;

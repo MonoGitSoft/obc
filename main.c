@@ -97,6 +97,7 @@ void task_manage(void)
     task_ADC();
     Control();
     dead_reckoning();
+    ComErrorDetectio();
 }
 
 
@@ -117,6 +118,11 @@ int main(void)
    // write_debug();
     Start_Control_Timer();
     I2CTWI_initSlave(0x20);
+    I2CTWI_readRegisters[0]='H';
+    I2CTWI_readRegisters[1]='e';
+    I2CTWI_readRegisters[2]='l';
+    I2CTWI_readRegisters[3]='l';
+    I2CTWI_readRegisters[4]='o';
     Set_Des_Speed(8);
    // Set_Distance(1000);permission.move = 1; stand = 0;
     while( true )

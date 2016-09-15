@@ -25,7 +25,6 @@
 // Includes:
 
 #include "RP6I2CslaveTWI.h"
-#include "RP6RobotBaseLib.h"
 
 /*****************************************************************************/
 
@@ -58,64 +57,15 @@ void I2CTWI_initSlave(uint8_t address)
 #define I2CTWI_STATE_READ_REG 4
 #define I2CTWI_STATE_REP_START 5
 
-#define COMMAND_RX 0
-#define COMMAND 1
-#define PARAM_1 2
-
-#define PARAM_2 3
-#define PARAM_3 4
-#define PARAM_4 5
-#define PARAM_5 6
-#define COMMAND_READY 1
-
-
-uint8_t sendBuf[I2CTWI_SLAVE_READ_REGISTERS];
-
-#define COMMAND_READY 1
-
 
 uint8_t I2CTWI_readRegisters[I2CTWI_SLAVE_READ_REGISTERS];
-
 volatile uint8_t I2CTWI_writeRegisters[I2CTWI_SLAVE_WRITE_REGISTERS];
 volatile uint8_t I2CTWI_genCallCMD;
 volatile uint8_t I2CTWI_dataWasRead = 0;
 volatile uint8_t I2CTWI_dataReadFromReg = 0;
-volatile uint8_t command = 0;
-
-volatile uint8_t param_1 = 0;
-volatile uint8_t param_2 = 0;
-volatile uint8_t param_3 = 0;
-volatile uint8_t param_4 = 0;
-volatile uint8_t param_5 = 0;
-
-
 
 volatile uint8_t I2CTWI_readBusy = 0;
 volatile uint8_t I2CTWI_writeBusy = 0;
-
-int get_command(void)
-{
-    int i;
-    if(I2CTWI_writeRegisters[COMMAND_RX] == COMMAND_READY)
-    {
-        I2CTWI_writeRegisters[COMMAND_RX] = 0;
-        command = I2CTWI_writeRegisters[COMMAND];
-        param_1 = I2CTWI_writeRegisters[PARAM_1];
-
-        param_2 = I2CTWI_writeRegisters[PARAM_2];
-        param_3 = I2CTWI_writeRegisters[PARAM_3];
-        param_4 = I2CTWI_writeRegisters[PARAM_4];
-        param_5 = I2CTWI_writeRegisters[PARAM_5];
-
-        I2CTWI_readRegisters[0] = command;
-        I2CTWI_readRegisters[1] = param_1;
-        writeInteger(command,DEC);writeString("\n\r");
-        writeInteger(param_1,DEC);writeString("\n\r");
-
-        return 1;
-    }
-    return 0;
-}
 
 ISR (TWI_vect)
 {
@@ -127,11 +77,7 @@ ISR (TWI_vect)
 			I2CTWI_readBusy = 1;
 		case TWI_STX_DATA_ACK:  // Data byte in TWDR has been transmitted; ACK has been received
 			if(TWI_state == I2CTWI_STATE_READ_REG)
-
-				TWDR = sendBuf[current_register++]; // Semofor beiktatása sztem és kiolvasás utáni engedélyezés asd
-
 				TWDR = I2CTWI_readRegisters[current_register++];
-
 			TWCR = (1<<TWEN)|(1<<TWIE)|(1<<TWINT)|(1<<TWEA); // Enable TWI Interupt and clear the flag to send byte
 		break;
 		case TWI_STX_DATA_NACK: // Data byte in TWDR has been transmitted; NACK has been received.
@@ -149,10 +95,6 @@ ISR (TWI_vect)
 		case TWI_SRX_ADR_DATA_ACK: // Previously addressed with own SLA+W; data has been received; ACK has been returned
 			if(TWI_state == I2CTWI_STATE_WRITE_REG) {
 				current_register = TWDR;
-				if(current_register > 15) //prevent fail read from and write to registers
-					{
-						current_register = 15; // error read_reg
-					}
 				I2CTWI_dataReadFromReg = current_register;
 				TWI_state = I2CTWI_STATE_WRITE_DATA;
 			}

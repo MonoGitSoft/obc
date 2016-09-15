@@ -15,5 +15,6 @@ extern volatile uint16_t param;
 void UartCom(void);
 void SendEncoder(void);
 void SendPose(void);
+void ComErrorDetectio(void);
 
 #endif /* COM_H_ */
