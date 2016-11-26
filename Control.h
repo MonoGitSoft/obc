@@ -8,6 +8,8 @@ void Control(void);
 void Start_Control_Timer(void);
 void Set_Des_Speed(float des_speed);
 void Set_Distance(uint16_t dist);
+void ss_Set_Des_Speed(float ss_req_speed);
+void ss_Control(void);
 void Control_Debug(void);
 void Update_States(void);
 void Rotate_Right(uint16_t angle);

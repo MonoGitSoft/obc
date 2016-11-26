@@ -247,7 +247,6 @@ DDRD = INIT_DDRD;
 
 #define BAUD_HIGH		57600 //High speed - 500 kBaud
 
-#define BAUD_HIGH		500000 //High speed - 500 kBaud
 
 #define UBRR_BAUD_HIGH	((F_CPU/(16*BAUD_HIGH))-1)
 
