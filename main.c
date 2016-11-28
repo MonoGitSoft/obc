@@ -45,7 +45,7 @@ void command_processor(void)
     {
         switch( Command )
         {
-            case MOVE_FORWARD: Set_Distance(((float)param/RES_R));permission.move = 1; stand = 0;break; //set dist,add permission to move
+            case MOVE_FORWARD: Set_Distance((uint16_t)((float)param/RES_R));permission.move = 1; stand = 0;break; //set dist,add permission to move
             case ROTATE_LEFT: Rotate_Left((uint16_t)(((float)param*(PI/180)*(DIAM))/(RES_R))) ;stand = 0;permission.rotate_left = 1; break;
             case ROTATE_RIGHT: Rotate_Right((uint16_t)(((float)param*(PI/180)*(DIAM))/(RES_R)));  stand = 0;permission.rotate_right = 1;break;
             case SEND_POSE: SendPose();break;
@@ -56,14 +56,30 @@ void command_processor(void)
     }
 }
 
+void ss_command_processor(void)
+{
+    if( Command != 0 )
+    {
+        switch( Command )
+        {
+            case MOVE_FORWARD: ss_Set_Distance((uint16_t)((float)param/RES_R));permission.move = 1; stand = 0;break; //set dist,add permission to move
+            case ROTATE_LEFT: ss_Rotate_Left((uint16_t)(((float)param*(PI/180)*(DIAM))/(RES_R))); stand = 0;permission.rotate_left = 1; break;
+            case ROTATE_RIGHT: ss_Rotate_Right((uint16_t)(((float)param*(PI/180)*(DIAM))/(RES_R)));  stand = 0;permission.rotate_right = 1;break;
+            case SEND_POSE: SendPose();break;
+            case SEND_ENCODER: SendEncoder();break;
+            case STREAM: permission.stream = 1;
+        }
+        Command = 0;
+    }
+}
 
 void task_manage(void)
 {
 	UartCom();
-    command_processor();
+    ss_command_processor();
     task_ADC();
-    Control();
-    //ss_Control();
+    //Control();
+    ss_Control();
     dead_reckoning();
     ComErrorDetectio();
 }
@@ -86,10 +102,11 @@ int main(void)
    // write_debug();
     Start_Control_Timer();
     //-----------SS test
- /*   setMotorDir(FWD,FWD);
+   /* setMotorDir(FWD,FWD);
     ss_Set_Des_Speed(5);
-    ss_Set_Distance(4000);
-    permission.move = 1;*/
+    ss_Set_Distance(100);
+    permission.move = 1;
+    stand = 0;*/
     //ss test-------------
     while( true )
 	{
